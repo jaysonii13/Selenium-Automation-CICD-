@@ -48,10 +48,11 @@ public class RegisterTest {
         Thread.sleep(2000); // Optional wait
 
         // Validate success message
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        WebElement resultMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div.result")));
-        System.out.println("Result: " + resultMessage.getText());      
-        Assert.assertTrue(resultMessage.getText().contains("Your registration completed"));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+        WebElement resultMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[contains(text(),'Your registration completed')]"))
+        	);    
+        System.out.println("Result: " + resultMessage.getText());
+
     }
 
     @AfterClass
