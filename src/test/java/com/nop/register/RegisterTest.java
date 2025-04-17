@@ -4,9 +4,12 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.*;
 
+import java.time.Duration;
 import java.util.UUID;
 
 public class RegisterTest {
@@ -45,8 +48,10 @@ public class RegisterTest {
         Thread.sleep(2000); // Optional wait
 
         // Validate success message
-        WebElement successMsg = driver.findElement(By.cssSelector("div.result"));
-        Assert.assertTrue(successMsg.getText().contains("Your registration completed"));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebElement resultMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div.result")));
+        System.out.println("Result: " + resultMessage.getText());      
+        Assert.assertTrue(resultMessage.getText().contains("Your registration completed"));
     }
 
     @AfterClass
