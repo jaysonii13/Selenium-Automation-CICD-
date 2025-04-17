@@ -1,4 +1,4 @@
-package com.nop.register;
+package tests;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -7,57 +7,64 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
-import org.testng.annotations.*;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 import java.time.Duration;
 import java.util.UUID;
 
 public class RegisterTest {
+
     WebDriver driver;
+    WebDriverWait wait;
 
     @BeforeClass
-    public void setup() {
+    public void setUp() {
+        System.setProperty("webdriver.chrome.driver", "C:\\path\\to\\chromedriver.exe"); // change path as needed
         driver = new ChromeDriver();
         driver.manage().window().maximize();
+        wait = new WebDriverWait(driver, Duration.ofSeconds(20));
     }
 
     @Test
-    public void testRegistration() throws InterruptedException {
-        driver.get("https://demo.nopcommerce.com/register");
+    public void testRegistration() {
+        driver.get("https://demo.nopcommerce.com/register?returnUrl=%2F");
 
-        // Gender
+        // Fill form
         driver.findElement(By.id("gender-male")).click();
-
-        // First name
         driver.findElement(By.id("FirstName")).sendKeys("Jay");
-
-        // Last name
         driver.findElement(By.id("LastName")).sendKeys("Soni");
 
-        // Email (random for uniqueness)
-        String email = "jay" + UUID.randomUUID().toString().substring(0, 5) + "@mail.com";
+        // Unique email using UUID
+        String email = "jay_" + UUID.randomUUID().toString().substring(0, 5) + "@example.com";
         driver.findElement(By.id("Email")).sendKeys(email);
 
-        // Password & Confirm
         driver.findElement(By.id("Password")).sendKeys("Test@1234");
         driver.findElement(By.id("ConfirmPassword")).sendKeys("Test@1234");
 
-        // Click register
+        // Click Register
         driver.findElement(By.id("register-button")).click();
 
-        Thread.sleep(2000); // Optional wait
+        // Wait for success message
+        WebElement successMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div.result")));
+        Assert.assertTrue(successMessage.getText().contains("Your registration completed"), "✅ Registration message not displayed");
 
-        // Validate success message
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
-        WebElement myAccountLink = wait.until(
-            ExpectedConditions.visibilityOfElementLocated(By.cssSelector("a.ico-account"))
-        );  
-        Assert.assertTrue(myAccountLink.isDisplayed(), "Registration might have failed - 'My account' link not visible.");
-        System.out.println("✅ Registration successful. 'My account' link is visible.");
+        // Optional debug logs
+        System.out.println("Page Title: " + driver.getTitle());
+        System.out.println("URL: " + driver.getCurrentUrl());
+
+        // Wait for "My account" link
+        WebElement myAccountLink = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("a.ico-account")));
+        Assert.assertTrue(myAccountLink.isDisplayed(), "❌ 'My account' link not visible");
+
+        System.out.println("✅ Registration successful and user is logged in.");
     }
 
     @AfterClass
-    public void teardown() {
-        if (driver != null) driver.quit();
+    public void tearDown() {
+        if (driver != null) {
+            driver.quit();
+        }
     }
 }
