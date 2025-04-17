@@ -49,10 +49,11 @@ public class RegisterTest {
 
         // Validate success message
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
-        WebElement resultMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[contains(text(),'Your registration completed')]"))
-        	);    
-        System.out.println("Result: " + resultMessage.getText());
-
+        WebElement myAccountLink = wait.until(
+            ExpectedConditions.visibilityOfElementLocated(By.cssSelector("a.ico-account"))
+        );  
+        Assert.assertTrue(myAccountLink.isDisplayed(), "Registration might have failed - 'My account' link not visible.");
+        System.out.println("✅ Registration successful. 'My account' link is visible.");
     }
 
     @AfterClass
