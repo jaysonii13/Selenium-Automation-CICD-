@@ -1,4 +1,4 @@
-package tests;
+package com.nop.register;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
